@@ -293,6 +293,7 @@
 0x20A0:0x42D4:Canokeys Canokey
 
 # CASTLES
+0x0CA6:0x0010:CASTLES EZUSB Smart Card Reader
 0x0CA6:0x00A0:CASTLES EZCCID Smart Card Reader
 
 # CCB

@@ -1229,8 +1229,39 @@ _ccid_descriptor *get_ccid_descriptor(unsigned int reader_index)
  *					get_ccid_device_descriptor
  *
  ****************************************************************************/
+/* Imitate Castles EZCCID reader. */
+static const unsigned char fake_descriptor[54] = {
+	0x36, 0x21,
+	0x00, 0x01, // bcdCCID
+	0x00, // bMaxSlotIndex
+	0x01, // bVoltageSupport (5.0V only?)
+	0x03, 0x00, 0x00, 0x00, // dwProtocols
+	0xFC, 0x0D, 0x00, 0x00, // dwDefaultClock
+	0xFC, 0x0D, 0x00, 0x00, // dwMaximumClock
+	0x01, // bNumClockSupported
+	0x80, 0x25, 0x00, 0x00, // dwDataRate
+	0x00, 0xC2, 0x01, 0x00, // dwMaxDataRate
+	0x0F, // bNumDataRatesSupported
+	252, 0x00, 0x00, 0x00, // dwMaxIFSD
+	0x00, 0x00, 0x00, 0x00, // dwSynchProtocols
+	0x00, 0x00, 0x00, 0x00, // dwMechanical
+	0x30, 0x01, 0x01, 0x00, // dwFeatures
+	(271-256), 0x01, 0x00, 0x00, // dwMaxCCIDMessageLength
+	0x00, // bClassGetResponse
+	0x00, // bClassEnvelope
+	0x00, 0x00, // wLcdLayout
+	0x00, // bPINSupport
+	0x01, // bMaxCCIDBusySlots
+};
+
 const unsigned char *get_ccid_device_descriptor(const struct libusb_interface *usb_interface)
 {
+	// Terrible HACK
+	if (1) {
+		return fake_descriptor;
+	}
+
+
 #ifdef O2MICRO_OZ776_PATCH
 	uint8_t last_endpoint;
 #endif
@@ -1364,6 +1395,8 @@ uint8_t get_ccid_usb_device_address(int reader_index)
 			|| (desc->interface[i].altsetting->bInterfaceClass == 0xff
 			&& 54 == desc->interface[i].altsetting->extra_length)
 #endif
+			|| (desc->interface[i].altsetting->bInterfaceClass == 0x00
+			&& desc->wTotalLength == 0x0027)
 			)
 		{
 			usb_interface = &desc->interface[i];

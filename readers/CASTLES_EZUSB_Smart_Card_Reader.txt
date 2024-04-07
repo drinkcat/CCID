@@ -1,0 +1,18 @@
+ idVendor: 0x0CA6
+  iManufacturer: CASTLES
+ idProduct: 0x0010
+  iProduct: EZ100PU Smart Card Reader
+ bcdDevice: 0.10 (firmware release?)
+ bLength: 9
+ bDescriptorType: 4
+ bInterfaceNumber: 0
+ bAlternateSetting: 0
+ bNumEndpoints: 3
+  bulk-IN, bulk-OUT and Interrupt-IN
+ bInterfaceClass: 0x00
+  NOT A CCID DEVICE
+ bInterfaceSubClass: 0
+ bInterfaceProtocol: 0
+  bulk transfer, optional interrupt-IN (CCID)
+ Can't get iInterface string: LIBUSB_ERROR_INVALID_PARAM
+  NOT A CCID DEVICE

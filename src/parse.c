@@ -366,10 +366,10 @@ static bool ccid_parse_interface_descriptor(libusb_device_handle *handle,
 	else
 	{
 		(void)fprintf(fd, "\n  NOT A CCID DEVICE\n");
-		if (usb_interface_descriptor->bInterfaceClass != 0xFF)
-			return true;
-		else
-			(void)fprintf(fd, "  Class is 0xFF (proprietary)\n");
+		//if (usb_interface_descriptor->bInterfaceClass != 0xFF)
+		//	return true;
+		//else
+		//	(void)fprintf(fd, "  Class is 0xFF (proprietary)\n");
 	}
 
 	(void)fprintf(fd, " bInterfaceSubClass: %d\n",
@@ -405,6 +405,8 @@ static bool ccid_parse_interface_descriptor(libusb_device_handle *handle,
 	device_descriptor = get_ccid_device_descriptor(usb_interface);
 	if (NULL == device_descriptor)
 	{
+		(void)fprintf(fd, "\n  usb_interface->num_altsetting=%d\n", usb_interface->num_altsetting);
+		(void)fprintf(fd, "\n  usb_interface->altsetting->extra_length=%d\n", usb_interface->altsetting->extra_length);
 		(void)fprintf(fd, "\n  NOT A CCID DEVICE\n");
 		return true;
 	}

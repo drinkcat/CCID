@@ -86,6 +86,9 @@ static RESPONSECODE CmdXfrBlockTPDU_T1(unsigned int reader_index,
 static void i2dw(int value, unsigned char *buffer);
 static unsigned int bei2i(unsigned char *buffer);
 
+static unsigned int cmd_dw2i(unsigned char *a, int x) {
+	return (unsigned int)(((((((unsigned int)a[x] << 8) + (unsigned int)a[x+1]) << 8) + (unsigned int)a[x+2]) << 8) + (unsigned int)a[x+3]);
+}
 
 /*****************************************************************************
  *
@@ -96,7 +99,7 @@ RESPONSECODE CmdPowerOn(unsigned int reader_index, unsigned int * nlength,
 	unsigned char buffer[], int voltage)
 {
 	unsigned char cmd[10];
-	unsigned char resp[10 + MAX_ATR_SIZE];
+	unsigned char resp[11 + MAX_ATR_SIZE];
 	int bSeq;
 	status_t res;
 	int count = 1;
@@ -287,13 +290,17 @@ again:
 	}
 
 	/* extract the ATR */
-	atr_len = dw2i(resp, 1);	/* ATR length */
+	/* HACK: EZ100PU length endianess is WRONG?! */
+	atr_len = cmd_dw2i(resp, 1);	/* ATR length */
+	/* HACK: EZ100PU ATR response is prefixed by a 0x00. */
+	atr_len -= 1;
 	if (atr_len > *nlength)
 		atr_len = *nlength;
 
 	*nlength = atr_len;
 
-	memmove(buffer, resp+10, atr_len);
+	/* HACK: EZ100PU ATR response is prefixed by a 0x00. */
+	memmove(buffer, resp+10+1, atr_len);
 
 	return return_value;
 } /* CmdPowerOn */
@@ -1045,7 +1052,7 @@ time_request:
 	}
 
 	/* copy the response */
-	length_out = dw2i(cmd_out, 1);
+	length_out = cmd_dw2i(cmd_out, 1);
 	if (length_out > *RxLength)
 	{
 		length_out = *RxLength;
@@ -1610,14 +1617,14 @@ time_request:
 	}
 
 	/* we have read less (or more) data than the CCID frame says to contain */
-	if (length-10 != dw2i(cmd, 1))
+	if (length-10 != cmd_dw2i(cmd, 1))
 	{
 		DEBUG_CRITICAL3("Can't read all data (%d out of %d expected)",
-			length-10, dw2i(cmd, 1));
+			length-10, cmd_dw2i(cmd, 1));
 		return_value = IFD_COMMUNICATION_ERROR;
 	}
 
-	length = dw2i(cmd, 1);
+	length = cmd_dw2i(cmd, 1);
 	if (length <= *rx_length)
 		*rx_length = length;
 	else
@@ -2376,10 +2383,14 @@ int isCharLevel(int reader_index)
  ****************************************************************************/
 static void i2dw(int value, unsigned char buffer[])
 {
-	buffer[0] = value & 0xFF;
-	buffer[1] = (value >> 8) & 0xFF;
-	buffer[2] = (value >> 16) & 0xFF;
-	buffer[3] = (value >> 24) & 0xFF;
+	//buffer[0] = value & 0xFF;
+	//buffer[1] = (value >> 8) & 0xFF;
+	//buffer[2] = (value >> 16) & 0xFF;
+	//buffer[3] = (value >> 24) & 0xFF;
+	buffer[3] = value & 0xFF;
+	buffer[2] = (value >> 8) & 0xFF;
+	buffer[1] = (value >> 16) & 0xFF;
+	buffer[0] = (value >> 24) & 0xFF;
 } /* i2dw */
 
 /*****************************************************************************
