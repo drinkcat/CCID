@@ -1,6 +1,6 @@
 [submodule "PCSC"]
 	path = PCSC
-	url = ../PCSC.git
+	url = https://github.com/LudovicRousseau/PCSC.git
 [submodule "PCSC-contrib"]
 	path = PCSC-contrib
-	url = ../PCSC-contrib.git
+	url = https://github.com/LudovicRousseau/PCSC-contrib.git
