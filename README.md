@@ -203,6 +203,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 History:
 ========
 
+1.5.5.1 - 14 April 2024, Nicolas
+   - Forked off CCID upstream at commit 00bbd6954670 ("Code reformat")
+     technically this is past 1.5.5 release.
+   - Add support for EZUSB/EZ100PU, disable all other CCID card readers.
+
 1.5.5 - 5 January 2024, Ludovic Rousseau
    - Add support of
      - Alpha-Project ANGARA Token
